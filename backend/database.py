@@ -36,7 +36,7 @@ async def connect_to_mongo():
 async def create_indexes():
     """Create database indexes for better performance"""
     try:
-        if not database.database:
+        if database.database is None:
             return
         
         # Somali words indexes
