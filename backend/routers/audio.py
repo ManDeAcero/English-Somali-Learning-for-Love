@@ -3,9 +3,9 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from datetime import datetime
 import logging
 
-from ..models.somali_models import AudioRequest, AudioResponse
-from ..services.tts_service import tts_service
-from ..database import get_database
+from models.somali_models import AudioRequest, AudioResponse
+from services.tts_service import tts_service
+from database import get_database
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
