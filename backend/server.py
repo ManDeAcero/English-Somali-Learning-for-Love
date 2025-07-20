@@ -7,10 +7,10 @@ from pathlib import Path
 from contextlib import asynccontextmanager
 
 # Import database functions
-from .database import connect_to_mongo, close_mongo_connection
+from database import connect_to_mongo, close_mongo_connection
 
 # Import routers
-from .routers import words, audio, users, quiz, tiers
+from routers import words, audio, users, quiz, tiers
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
