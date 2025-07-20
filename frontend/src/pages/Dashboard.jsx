@@ -321,6 +321,9 @@ const Dashboard = () => {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Master Somali through culturally-aware, gamified learning. From basic greetings to romantic expressions - learn with respect and confidence.
           </p>
+          <div className="flex justify-center">
+            <PronunciationGuide />
+          </div>
         </div>
 
         {/* Progress Section */}
