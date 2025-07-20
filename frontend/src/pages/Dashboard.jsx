@@ -47,7 +47,7 @@ const Dashboard = () => {
   // Load initial data
   useEffect(() => {
     loadInitialData();
-  }, []);
+  }, []); // Empty dependency array to run only once
 
   const loadInitialData = async () => {
     try {
