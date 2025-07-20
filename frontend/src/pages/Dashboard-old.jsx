@@ -252,6 +252,102 @@ const Dashboard = () => {
     );
   }
 
+  // Filter words based on current filters
+  const filteredWords = words.filter(word => {
+    const matchesTier = word.tier === selectedTier;
+    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(word.category);
+    const matchesSearch = word.somali.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         word.english.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFavorites = !showFavoritesOnly || word.isFavorite;
+    
+    return matchesTier && matchesCategory && matchesSearch && matchesFavorites;
+  });
+
+  const favoriteWords = words.filter(word => word.isFavorite);
+
+  const handleFavorite = (wordId) => {
+    setWords(prevWords => 
+      prevWords.map(word => 
+        word.id === wordId 
+          ? { ...word, isFavorite: !word.isFavorite }
+          : word
+      )
+    );
+  };
+
+  const handleWordComplete = (wordId, points) => {
+    setUserProgress(prev => ({
+      ...prev,
+      totalPoints: prev.totalPoints + points,
+      completedWords: [...prev.completedWords, wordId]
+    }));
+  };
+
+  const handleCategoryToggle = (categoryId) => {
+    setSelectedCategories(prev => 
+      prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  };
+
+  const handleTierSelect = (tierId) => {
+    // Check if tier contains sensitive content
+    if (tierId >= 4 && !showCulturalPopup) {
+      setShowCulturalPopup(true);
+      return;
+    }
+    setSelectedTier(tierId);
+  };
+
+  const handleCulturalAcceptance = () => {
+    setShowCulturalPopup(false);
+    setSelectedTier(4); // or whichever tier was selected
+  };
+
+  const startQuiz = (useOnlyFavorites = false) => {
+    const quizWords = useOnlyFavorites ? favoriteWords : filteredWords;
+    if (quizWords.length === 0) return;
+    
+    setIsQuizMode(quizWords);
+  };
+
+  const handleAnkiExport = () => {
+    const exportData = filteredWords.map(word => ({
+      Front: word.somali,
+      Back: word.english,
+      Phonetic: word.phonetic,
+      Example: word.example,
+      'Cultural Tip': word.culturalTip
+    }));
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
+      type: 'application/json' 
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `somali-words-tier-${selectedTier}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  if (isQuizMode) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+        <div className="container mx-auto py-8">
+          <QuizMode 
+            words={isQuizMode}
+            onComplete={() => setIsQuizMode(false)}
+            onClose={() => setIsQuizMode(false)}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Cultural Sensitivity Popup */}
@@ -300,7 +396,7 @@ const Dashboard = () => {
         </div>
 
         {/* Progress Section */}
-        {userProgress && <ProgressBar userProgress={userProgress} />}
+        <ProgressBar userProgress={userProgress} />
 
         {/* Tier Selection */}
         <Card>
@@ -314,7 +410,7 @@ const Dashboard = () => {
             <TierSelector 
               selectedTier={selectedTier}
               onTierSelect={handleTierSelect}
-              unlockedTiers={userProgress?.unlocked_tiers || [1]}
+              unlockedTiers={userProgress.unlockedTiers}
             />
           </CardContent>
         </Card>
@@ -368,7 +464,7 @@ const Dashboard = () => {
             <CategoryFilter
               selectedCategories={selectedCategories}
               onCategoryToggle={handleCategoryToggle}
-              onClearAll={clearAllCategories}
+              onClearAll={() => setSelectedCategories([])}
             />
 
             {/* Words Grid */}
