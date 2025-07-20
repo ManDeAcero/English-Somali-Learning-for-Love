@@ -246,6 +246,7 @@ const Dashboard = () => {
   };
 
   if (loading) {
+    console.log('Rendering loading screen...');
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
         <Card className="p-8">
@@ -257,6 +258,8 @@ const Dashboard = () => {
       </div>
     );
   }
+
+  console.log('Rendering main dashboard..., loading:', loading);
 
   if (isQuizMode) {
     return (
