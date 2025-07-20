@@ -14,6 +14,7 @@ import {
   Download,
   AlertCircle 
 } from 'lucide-react';
+import axios from 'axios';
 
 import WordCard from '../components/WordCard';
 import ProgressBar from '../components/ProgressBar';
@@ -21,17 +22,231 @@ import TierSelector from '../components/TierSelector';
 import CategoryFilter from '../components/CategoryFilter';
 import QuizMode from '../components/QuizMode';
 
-import { MOCK_WORDS, MOCK_USER_PROGRESS, CATEGORIES } from '../data/mock';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Dashboard = () => {
-  const [words, setWords] = useState(MOCK_WORDS);
-  const [userProgress, setUserProgress] = useState(MOCK_USER_PROGRESS);
+  // State for data
+  const [words, setWords] = useState([]);
+  const [userProgress, setUserProgress] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [tiers, setTiers] = useState([]);
+  
+  // State for UI
   const [selectedTier, setSelectedTier] = useState(1);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [isQuizMode, setIsQuizMode] = useState(false);
   const [showCulturalPopup, setShowCulturalPopup] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [pendingTier, setPendingTier] = useState(null);
+
+  const userId = 'demo_user'; // In a real app, this would come from auth
+
+  // Load initial data
+  useEffect(() => {
+    loadInitialData();
+  }, []);
+
+  const loadInitialData = async () => {
+    try {
+      setLoading(true);
+      
+      // Load user progress (creates user if not exists)
+      const progressRes = await axios.get(`${BACKEND_URL}/api/progress/users/${userId}/progress`);
+      setUserProgress(progressRes.data);
+      
+      // Load tiers
+      const tiersRes = await axios.get(`${BACKEND_URL}/api/tiers/tiers`);
+      setTiers(tiersRes.data.tiers);
+      
+      // Load categories
+      const categoriesRes = await axios.get(`${BACKEND_URL}/api/somali/categories`);
+      setCategories(categoriesRes.data.categories);
+      
+      // Load words for initial tier
+      await loadWordsForTier(1);
+      
+    } catch (error) {
+      console.error('Failed to load initial data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadWordsForTier = async (tierId) => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}/api/somali/words/tier/${tierId}`);
+      setWords(response.data.words);
+    } catch (error) {
+      console.error('Failed to load words for tier:', error);
+    }
+  };
+
+  // Filter words based on current filters
+  const filteredWords = words.filter(word => {
+    const matchesTier = word.tier === selectedTier;
+    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(word.category);
+    const matchesSearch = word.somali.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                         word.english.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFavorites = !showFavoritesOnly || (userProgress?.favorites || []).includes(word.id);
+    
+    return matchesTier && matchesCategory && matchesSearch && matchesFavorites;
+  });
+
+  const favoriteWords = words.filter(word => (userProgress?.favorites || []).includes(word.id));
+
+  const handleFavorite = async (wordId) => {
+    try {
+      await axios.put(`${BACKEND_URL}/api/progress/users/${userId}/progress`, {
+        favorite_toggled: wordId
+      });
+      
+      // Refresh user progress
+      const progressRes = await axios.get(`${BACKEND_URL}/api/progress/users/${userId}/progress`);
+      setUserProgress(progressRes.data);
+      
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error);
+    }
+  };
+
+  const handleWordComplete = async (wordId, points) => {
+    try {
+      await axios.put(`${BACKEND_URL}/api/progress/users/${userId}/progress`, {
+        word_completed: wordId,
+        points_earned: points
+      });
+      
+      // Refresh user progress
+      const progressRes = await axios.get(`${BACKEND_URL}/api/progress/users/${userId}/progress`);
+      setUserProgress(progressRes.data);
+      
+    } catch (error) {
+      console.error('Failed to complete word:', error);
+    }
+  };
+
+  const handleCategoryToggle = (categoryId) => {
+    setSelectedCategories(prev => 
+      prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  };
+
+  const handleTierSelect = async (tierId) => {
+    try {
+      // Check if tier can be unlocked
+      const unlockCheck = await axios.get(`${BACKEND_URL}/api/tiers/tiers/check-unlock/${tierId}?user_id=${userId}`);
+      
+      if (!unlockCheck.data.can_unlock && !unlockCheck.data.already_unlocked) {
+        const missingReqs = unlockCheck.data.missing_requirements;
+        const culturalReq = missingReqs.find(req => req.type === 'cultural_acknowledgment');
+        
+        if (culturalReq) {
+          setPendingTier(tierId);
+          setShowCulturalPopup(true);
+          return;
+        } else {
+          alert(`Cannot unlock tier ${tierId}. Requirements: ${missingReqs.map(req => req.message || `${req.type}: ${req.required}`).join(', ')}`);
+          return;
+        }
+      }
+      
+      setSelectedTier(tierId);
+      await loadWordsForTier(tierId);
+      
+    } catch (error) {
+      console.error('Failed to select tier:', error);
+    }
+  };
+
+  const handleCulturalAcceptance = async () => {
+    try {
+      await axios.post(`${BACKEND_URL}/api/tiers/tiers/${pendingTier}/cultural-acknowledge?user_id=${userId}`);
+      
+      // Refresh user progress
+      const progressRes = await axios.get(`${BACKEND_URL}/api/progress/users/${userId}/progress`);
+      setUserProgress(progressRes.data);
+      
+      setShowCulturalPopup(false);
+      setSelectedTier(pendingTier);
+      await loadWordsForTier(pendingTier);
+      setPendingTier(null);
+      
+    } catch (error) {
+      console.error('Failed to acknowledge cultural guidelines:', error);
+    }
+  };
+
+  const startQuiz = async (useOnlyFavorites = false) => {
+    const quizWords = useOnlyFavorites ? favoriteWords : filteredWords;
+    if (quizWords.length === 0) return;
+    
+    try {
+      const wordIds = quizWords.map(w => w.id);
+      const response = await axios.post(`${BACKEND_URL}/api/quiz/quiz/generate`, {
+        user_id: userId,
+        word_ids: wordIds,
+        question_count: Math.min(10, wordIds.length)
+      });
+      
+      setIsQuizMode(response.data);
+    } catch (error) {
+      console.error('Failed to start quiz:', error);
+    }
+  };
+
+  const handleAnkiExport = () => {
+    const exportData = filteredWords.map(word => ({
+      Front: word.somali,
+      Back: word.english,
+      Phonetic: word.phonetic,
+      Example: word.example_somali,
+      ExampleEnglish: word.example_english,
+      'Cultural Tip': word.cultural_tip
+    }));
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
+      type: 'application/json' 
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `somali-words-tier-${selectedTier}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+        <Card className="p-8">
+          <div className="text-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p className="text-lg">Loading your Somali learning journey...</p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isQuizMode) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4">
+        <div className="container mx-auto py-8">
+          <QuizMode 
+            words={filteredWords}
+            onComplete={() => setIsQuizMode(false)}
+            onClose={() => setIsQuizMode(false)}
+          />
+        </div>
+      </div>
+    );
+  }
 
   // Filter words based on current filters
   const filteredWords = words.filter(word => {
