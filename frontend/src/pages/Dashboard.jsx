@@ -21,6 +21,7 @@ import ProgressBar from '../components/ProgressBar';
 import TierSelector from '../components/TierSelector';
 import CategoryFilter from '../components/CategoryFilter';
 import QuizMode from '../components/QuizMode';
+import PronunciationGuide from '../components/PronunciationGuide';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
