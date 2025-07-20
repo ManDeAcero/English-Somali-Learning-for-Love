@@ -4,9 +4,9 @@ from typing import List, Optional
 from datetime import datetime
 import logging
 
-from ..models.somali_models import UserProgress, UserProgressUpdate, UserStats
-from ..database import get_database
-from ..data.somali_vocabulary import TIER_DEFINITIONS
+from models.somali_models import UserProgress, UserProgressUpdate, UserStats
+from database import get_database
+from data.somali_vocabulary import TIER_DEFINITIONS
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
