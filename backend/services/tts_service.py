@@ -115,5 +115,12 @@ class TTSService:
         adjusted_duration = base_duration / speed
         return max(0.5, adjusted_duration)  # Minimum 0.5 seconds
 
-# Global TTS service instance
-tts_service = TTSService()
+# Global TTS service instance - initialized lazily
+tts_service = None
+
+def get_tts_service():
+    """Get TTS service instance with lazy initialization"""
+    global tts_service
+    if tts_service is None:
+        tts_service = TTSService()
+    return tts_service
