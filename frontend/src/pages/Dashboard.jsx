@@ -135,6 +135,10 @@ const Dashboard = () => {
     );
   };
 
+  const clearAllCategories = () => {
+    setSelectedCategories([]);
+  };
+
   const handleTierSelect = async (tierId) => {
     try {
       // Check if tier can be unlocked
