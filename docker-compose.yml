@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: somali-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=somali_learning_pwa
+    networks:
+      - somali-network
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: somali-backend
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    depends_on:
+      - mongodb
+    env_file:
+      - ./backend/.env
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+      - DB_NAME=somali_learning_pwa
+    volumes:
+      - ./backend:/app
+      - backend_logs:/app/logs
+    networks:
+      - somali-network
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: somali-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    env_file:
+      - ./frontend/.env
+    networks:
+      - somali-network
+
+volumes:
+  mongodb_data:
+    driver: local
+  backend_logs:
+    driver: local
+
+networks:
+  somali-network:
+    driver: bridge
