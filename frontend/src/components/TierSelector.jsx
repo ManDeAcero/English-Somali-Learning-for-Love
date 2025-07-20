@@ -35,7 +35,7 @@ const TierSelector = ({ selectedTier, onTierSelect, unlockedTiers = [1] }) => {
             <CardContent className="p-4 text-center space-y-3">
               {/* Tier Icon */}
               <div className="text-3xl">
-                {unlocked ? getTierIcon(tier.id) : <Lock className="h-8 w-8 mx-auto text-gray-400" />}
+                {unlocked ? tier.icon : <Lock className="h-8 w-8 mx-auto text-gray-400" />}
               </div>
               
               {/* Tier Name */}
