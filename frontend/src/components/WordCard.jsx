@@ -117,6 +117,51 @@ const WordCard = ({ word, onFavorite, onComplete }) => {
             >
               <Info className="h-4 w-4 text-blue-500" />
             </Button>
+            <Dialog open={showPhoneticHelp} onOpenChange={setShowPhoneticHelp}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hover:bg-green-50 dark:hover:bg-green-950"
+                  title="Pronunciation Help"
+                >
+                  <HelpCircle className="h-4 w-4 text-green-500" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <HelpCircle className="h-5 w-5 text-green-500" />
+                    How to pronounce: {word.somali}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
+                    <div className="text-2xl font-bold mb-2">{word.somali}</div>
+                    <div className="text-lg text-muted-foreground">/{word.phonetic}/</div>
+                  </div>
+                  
+                  {getPhoneticBreakdown().length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-sm">Sound Breakdown:</h4>
+                      {getPhoneticBreakdown().map((item, index) => (
+                        <div key={index} className="p-2 bg-gray-50 dark:bg-gray-800 rounded text-sm">
+                          <span className="font-mono bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded mr-2">
+                            {item.sound}
+                          </span>
+                          {item.explanation}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-lg text-sm">
+                    <p className="font-medium mb-1">💡 Tip:</p>
+                    <p>Click the audio button and use "Ultra Slow" speed to hear each sound clearly!</p>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </CardHeader>
