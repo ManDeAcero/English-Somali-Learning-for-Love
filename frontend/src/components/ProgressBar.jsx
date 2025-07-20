@@ -5,10 +5,10 @@ import { Badge } from './ui/badge';
 import { Trophy, Flame, Star, Crown } from 'lucide-react';
 
 const ProgressBar = ({ userProgress }) => {
-  const { level, totalPoints, streak, badges, unlockedTiers } = userProgress;
+  const { level, total_points, current_streak, unlocked_tiers, badges_earned } = userProgress;
   
   const nextLevelPoints = level * 100; // Example: level 3 needs 300 points
-  const currentLevelProgress = (totalPoints % 100); // Progress within current level
+  const currentLevelProgress = (total_points % 100); // Progress within current level
   
   return (
     <Card className="bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 text-white">
@@ -21,11 +21,11 @@ const ProgressBar = ({ userProgress }) => {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <Flame className="h-4 w-4 text-orange-300" />
-              <span className="text-sm">{streak} day streak</span>
+              <span className="text-sm">{current_streak} day streak</span>
             </div>
             <div className="flex items-center gap-1">
               <Star className="h-4 w-4 text-yellow-300" />
-              <span className="text-sm">{totalPoints} points</span>
+              <span className="text-sm">{total_points} points</span>
             </div>
           </div>
         </CardTitle>
@@ -48,7 +48,7 @@ const ProgressBar = ({ userProgress }) => {
         <div className="space-y-2">
           <p className="text-sm font-medium">Unlocked Tiers:</p>
           <div className="flex gap-2 flex-wrap">
-            {unlockedTiers.map((tier, index) => (
+            {unlocked_tiers.map((tier, index) => (
               <Badge 
                 key={tier} 
                 variant="secondary" 
@@ -64,24 +64,43 @@ const ProgressBar = ({ userProgress }) => {
         <div className="space-y-2">
           <p className="text-sm font-medium">Badges:</p>
           <div className="flex gap-3">
-            {badges.map((badge) => (
-              <div
-                key={badge.id}
-                className={`flex flex-col items-center p-2 rounded-lg transition-all duration-300 ${
-                  badge.earned 
-                    ? 'bg-white/20 text-white shadow-lg' 
-                    : 'bg-black/20 text-gray-400'
-                }`}
-              >
-                <span className="text-lg mb-1">{badge.icon}</span>
-                <span className="text-xs text-center">{badge.name}</span>
+            {badges_earned.slice(0, 3).map((badgeId) => {
+              const badgeInfo = getBadgeInfo(badgeId);
+              return (
+                <div
+                  key={badgeId}
+                  className="flex flex-col items-center p-2 rounded-lg bg-white/20 text-white shadow-lg"
+                >
+                  <span className="text-lg mb-1">{badgeInfo.icon}</span>
+                  <span className="text-xs text-center">{badgeInfo.name}</span>
+                </div>
+              );
+            })}
+            {badges_earned.length > 3 && (
+              <div className="flex flex-col items-center p-2 rounded-lg bg-white/20 text-white shadow-lg">
+                <span className="text-lg mb-1">+{badges_earned.length - 3}</span>
+                <span className="text-xs text-center">More</span>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </CardContent>
     </Card>
   );
+};
+
+const getBadgeInfo = (badgeId) => {
+  const badges = {
+    'newcomer': { name: 'Welcome!', icon: '🎯' },
+    'first_favorite': { name: 'First Love', icon: '💝' },
+    'first_quiz': { name: 'Quiz Starter', icon: '🧠' },
+    'level_2': { name: 'Rising Scholar', icon: '📚' },
+    'level_3': { name: 'Dedicated Learner', icon: '🌟' },
+    'week_warrior': { name: 'Week Warrior', icon: '🔥' },
+    'tier_master': { name: 'Tier Climber', icon: '🏔️' },
+    'quiz_master': { name: 'Quiz Champion', icon: '🏆' }
+  };
+  return badges[badgeId] || { name: badgeId, icon: '🏅' };
 };
 
 export default ProgressBar;
