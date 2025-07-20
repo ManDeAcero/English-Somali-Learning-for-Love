@@ -2,25 +2,21 @@ import React from 'react';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Lock, CheckCircle } from 'lucide-react';
-import { TIERS } from '../data/mock';
 
-const TierSelector = ({ selectedTier, onTierSelect, unlockedTiers = [1, 2, 3] }) => {
-  const getTierIcon = (tierId) => {
-    const icons = {
-      1: '🌟',
-      2: '👋',
-      3: '🧙‍♂️',
-      4: '💕',
-      5: '🎯'
-    };
-    return icons[tierId] || '📚';
-  };
+const TIER_NAMES = [
+  { id: 1, name: 'Soo Booqo Starter', icon: '🌟' },
+  { id: 2, name: 'Salaan Smooth', icon: '👋' },
+  { id: 3, name: 'Wadahadal Wizard', icon: '🧙‍♂️' },
+  { id: 4, name: 'Jacayl Journey', icon: '💕' },
+  { id: 5, name: 'Smooth Talker Pro', icon: '🎯' }
+];
 
+const TierSelector = ({ selectedTier, onTierSelect, unlockedTiers = [1] }) => {
   const isUnlocked = (tierId) => unlockedTiers.includes(tierId);
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-      {TIERS.map((tier) => {
+      {TIER_NAMES.map((tier) => {
         const unlocked = isUnlocked(tier.id);
         const isSelected = selectedTier === tier.id;
         
