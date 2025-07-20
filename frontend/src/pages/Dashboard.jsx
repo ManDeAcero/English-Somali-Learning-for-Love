@@ -51,24 +51,37 @@ const Dashboard = () => {
   const loadInitialData = async () => {
     try {
       setLoading(true);
+      console.log('Starting to load initial data...');
       
       // Load user progress (creates user if not exists)
+      console.log('Loading user progress...');
       const progressRes = await axios.get(`${BACKEND_URL}/api/progress/users/${userId}/progress`);
+      console.log('User progress loaded:', progressRes.data);
       setUserProgress(progressRes.data);
       
       // Load tiers
+      console.log('Loading tiers...');
       const tiersRes = await axios.get(`${BACKEND_URL}/api/tiers/tiers`);
+      console.log('Tiers loaded:', tiersRes.data);
       setTiers(tiersRes.data.tiers);
       
       // Load categories
+      console.log('Loading categories...');
       const categoriesRes = await axios.get(`${BACKEND_URL}/api/somali/categories`);
+      console.log('Categories loaded:', categoriesRes.data);
       setCategories(categoriesRes.data.categories);
       
       // Load words for initial tier
+      console.log('Loading words for tier 1...');
       await loadWordsForTier(1);
+      
+      console.log('All initial data loaded successfully');
       
     } catch (error) {
       console.error('Failed to load initial data:', error);
+      console.error('Error details:', error.response?.data);
+      // Set loading to false even on error so UI shows something
+      setLoading(false);
     } finally {
       setLoading(false);
     }
