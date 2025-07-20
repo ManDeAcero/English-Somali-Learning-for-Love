@@ -80,6 +80,6 @@ async def close_mongo_connection():
 
 def get_database() -> AsyncIOMotorDatabase:
     """Get database instance for dependency injection"""
-    if not database.database:
+    if database.database is None:
         raise RuntimeError("Database not initialized")
     return database.database
