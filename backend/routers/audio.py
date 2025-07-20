@@ -4,7 +4,7 @@ from datetime import datetime
 import logging
 
 from models.somali_models import AudioRequest, AudioResponse
-from services.tts_service import tts_service
+from services.tts_service import get_tts_service
 from database import get_database
 
 router = APIRouter()
@@ -17,6 +17,9 @@ async def synthesize_audio(
 ):
     """Generate Somali audio pronunciation with caching"""
     try:
+        # Get TTS service instance
+        tts_service = get_tts_service()
+        
         # Generate cache key
         cache_key = tts_service.generate_cache_key(request.text, request.speed)
         
@@ -143,6 +146,9 @@ async def clear_audio_cache(db: AsyncIOMotorDatabase = Depends(get_database)):
 async def pregenerate_common_audio(db: AsyncIOMotorDatabase = Depends(get_database)):
     """Pre-generate audio for common words to improve performance"""
     try:
+        # Get TTS service instance
+        tts_service = get_tts_service()
+        
         # Get most common words (tier 1 and 2)
         common_words = await db.somali_words.find(
             {"tier": {"$in": [1, 2]}}
