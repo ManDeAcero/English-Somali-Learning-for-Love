@@ -83,8 +83,10 @@ const Dashboard = () => {
       console.error('Failed to load initial data:', error);
       console.error('Error details:', error.response?.data);
       // Set loading to false even on error so UI shows something
+      console.log('Setting loading to false due to error...');
       setLoading(false);
     } finally {
+      console.log('Finally: Setting loading to false...');
       setLoading(false);
     }
   };
