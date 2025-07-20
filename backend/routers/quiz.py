@@ -5,8 +5,8 @@ from datetime import datetime
 import random
 import logging
 
-from ..models.somali_models import QuizSession, QuizQuestion, QuizAnswer
-from ..database import get_database
+from models.somali_models import QuizSession, QuizQuestion, QuizAnswer
+from database import get_database
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
