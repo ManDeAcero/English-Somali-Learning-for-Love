@@ -20,9 +20,9 @@ const TestPronunciation = () => {
           <PronunciationGuide />
         </div>
 
-        {/* Sample Word Cards */}
+        {/* Sample Word Cards with Help Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="hover:shadow-lg transition-all duration-300">
+          <Card className="hover:shadow-lg transition-all duration-300 relative">
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
@@ -30,6 +30,9 @@ const TestPronunciation = () => {
                   <p className="text-lg text-muted-foreground">Peace be upon you</p>
                   <p className="text-sm text-muted-foreground italic">/sah-LAHM ah-LAY-koom/</p>
                 </div>
+                <Button variant="ghost" size="sm" className="hover:bg-green-50 dark:hover:bg-green-950" title="Pronunciation Help">
+                  <span className="text-green-500">🔊</span>
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
@@ -42,7 +45,7 @@ const TestPronunciation = () => {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-all duration-300">
+          <Card className="hover:shadow-lg transition-all duration-300 relative">
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
@@ -50,13 +53,62 @@ const TestPronunciation = () => {
                   <p className="text-lg text-muted-foreground">Milk</p>
                   <p className="text-sm text-muted-foreground italic">/kahn/</p>
                 </div>
+                <Button variant="ghost" size="sm" className="hover:bg-green-50 dark:hover:bg-green-950" title="Pronunciation Help">
+                  <span className="text-green-500">❓</span>
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="bg-orange-50 dark:bg-orange-950 p-3 rounded-lg">
+              <div className="bg-orange-50 dark:bg-orange-950 p-3 rounded-lg border-l-4 border-orange-500">
                 <p className="text-sm">
-                  <strong>Important:</strong> "Ca" in Somali is pronounced like "kah" (not like English "cat"). 
-                  This is a common mistake for English speakers!
+                  <strong>⚠️ Common Mistake:</strong> "Ca" in Somali is pronounced like "kah" (not like English "cat"). 
+                  This is one of the most common pronunciation errors for English speakers!
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-all duration-300 relative">
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold text-primary">Dhul</h3>
+                  <p className="text-lg text-muted-foreground">Land</p>
+                  <p className="text-sm text-muted-foreground italic">/dhool/</p>
+                </div>
+                <Button variant="ghost" size="sm" className="hover:bg-green-50 dark:hover:bg-green-950" title="Pronunciation Help">
+                  <span className="text-green-500">❓</span>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-purple-50 dark:bg-purple-950 p-3 rounded-lg border-l-4 border-purple-500">
+                <p className="text-sm">
+                  <strong>Special Sound:</strong> "Dh" is a retroflex d - curl your tongue tip back slightly. 
+                  It's different from English "th".
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-all duration-300 relative">
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold text-primary">Shaah</h3>
+                  <p className="text-lg text-muted-foreground">Tea</p>
+                  <p className="text-sm text-muted-foreground italic">/shah/</p>
+                </div>
+                <Button variant="ghost" size="sm" className="hover:bg-green-50 dark:hover:bg-green-950" title="Pronunciation Help">
+                  <span className="text-green-500">❓</span>
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-green-50 dark:bg-green-950 p-3 rounded-lg border-l-4 border-green-500">
+                <p className="text-sm">
+                  <strong>Double Vowel:</strong> "aa" is held longer than single "a". 
+                  Think "shah" with a extended "ah" sound.
                 </p>
               </div>
             </CardContent>
