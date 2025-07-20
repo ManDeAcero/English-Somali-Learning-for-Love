@@ -1,16 +1,15 @@
 import React from 'react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { CATEGORIES } from '../data/mock';
 
-const CategoryFilter = ({ selectedCategories, onCategoryToggle, onClearAll }) => {
+const CategoryFilter = ({ selectedCategories, onCategoryToggle, onClearAll, categories = [] }) => {
   return (
     <div className="space-y-4 mb-6">
       <div className="flex flex-wrap items-center gap-3">
         <span className="text-sm font-medium text-muted-foreground">Filter by category:</span>
         
         <div className="flex flex-wrap gap-2">
-          {CATEGORIES.map((category) => {
+          {categories.map((category) => {
             const isSelected = selectedCategories.includes(category.id);
             
             return (
@@ -48,7 +47,7 @@ const CategoryFilter = ({ selectedCategories, onCategoryToggle, onClearAll }) =>
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Active filters:</span>
           {selectedCategories.map((categoryId) => {
-            const category = CATEGORIES.find(c => c.id === categoryId);
+            const category = categories.find(c => c.id === categoryId);
             return (
               <Badge key={categoryId} variant="secondary" className="text-xs">
                 {category?.icon} {category?.name}
