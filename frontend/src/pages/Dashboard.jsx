@@ -369,6 +369,7 @@ const Dashboard = () => {
               selectedCategories={selectedCategories}
               onCategoryToggle={handleCategoryToggle}
               onClearAll={clearAllCategories}
+              categories={categories}
             />
 
             {/* Words Grid */}
