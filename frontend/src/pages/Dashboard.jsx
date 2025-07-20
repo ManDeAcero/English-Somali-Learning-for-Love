@@ -89,10 +89,13 @@ const Dashboard = () => {
 
   const loadWordsForTier = async (tierId) => {
     try {
+      console.log(`Loading words for tier ${tierId}...`);
       const response = await axios.get(`${BACKEND_URL}/api/somali/words/tier/${tierId}`);
+      console.log('Words loaded:', response.data);
       setWords(response.data.words);
     } catch (error) {
       console.error('Failed to load words for tier:', error);
+      console.error('Error details:', error.response?.data);
     }
   };
 
