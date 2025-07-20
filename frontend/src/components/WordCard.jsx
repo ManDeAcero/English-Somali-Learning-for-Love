@@ -104,10 +104,10 @@ const WordCard = ({ word, onFavorite, onComplete }) => {
         {/* Example */}
         <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-3 space-y-2">
           <p className="font-medium text-sm text-slate-700 dark:text-slate-300">
-            <strong>Example:</strong> {word.example}
+            <strong>Example:</strong> {word.example_somali}
           </p>
           <p className="text-sm text-slate-600 dark:text-slate-400 italic">
-            "{word.exampleEng}"
+            "{word.example_english}"
           </p>
         </div>
 
