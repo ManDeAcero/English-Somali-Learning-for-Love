@@ -47,6 +47,14 @@ const Dashboard = () => {
   // Load initial data
   useEffect(() => {
     loadInitialData();
+    
+    // Failsafe: stop loading after 10 seconds
+    const timeout = setTimeout(() => {
+      console.log('Forcing loading to stop after timeout');
+      setLoading(false);
+    }, 10000);
+    
+    return () => clearTimeout(timeout);
   }, []); // Empty dependency array to run only once
 
   const loadInitialData = async () => {
