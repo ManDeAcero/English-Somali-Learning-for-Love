@@ -76,6 +76,8 @@ const Dashboard = () => {
       await loadWordsForTier(1);
       
       console.log('All initial data loaded successfully');
+      console.log('Setting loading to false...');
+      setLoading(false);
       
     } catch (error) {
       console.error('Failed to load initial data:', error);
