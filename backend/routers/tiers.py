@@ -3,8 +3,8 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from typing import List
 import logging
 
-from ..database import get_database
-from ..data.somali_vocabulary import TIER_DEFINITIONS, CULTURAL_RESPECT_MESSAGES
+from database import get_database
+from data.somali_vocabulary import TIER_DEFINITIONS, CULTURAL_RESPECT_MESSAGES
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
