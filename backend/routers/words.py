@@ -4,9 +4,9 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from datetime import datetime
 import logging
 
-from ..models.somali_models import SomaliWord, SomaliWordCreate
-from ..database import get_database
-from ..data.somali_vocabulary import SOMALI_VOCABULARY
+from models.somali_models import SomaliWord, SomaliWordCreate
+from database import get_database
+from data.somali_vocabulary import SOMALI_VOCABULARY
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
