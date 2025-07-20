@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
-import { Heart, Info, Star, Trophy } from 'lucide-react';
+import { Heart, Info, Star, Trophy, HelpCircle } from 'lucide-react';
 import { Alert, AlertDescription } from './ui/alert';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import AudioPlayer from './AudioPlayer';
 
 const WordCard = ({ word, onFavorite, onComplete }) => {
