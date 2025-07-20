@@ -9,6 +9,7 @@ import AudioPlayer from './AudioPlayer';
 
 const WordCard = ({ word, onFavorite, onComplete }) => {
   const [showCulturalTip, setShowCulturalTip] = useState(false);
+  const [showPhoneticHelp, setShowPhoneticHelp] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
   const handleComplete = () => {
@@ -18,6 +19,36 @@ const WordCard = ({ word, onFavorite, onComplete }) => {
 
   const handleFavorite = () => {
     if (onFavorite) onFavorite(word.id);
+  };
+
+  const getPhoneticBreakdown = () => {
+    // Break down the word into phonetic components with explanations
+    const phonetic = word.phonetic || word.somali;
+    const somaliWord = word.somali;
+    
+    // Common Somali pronunciation patterns
+    const patterns = [
+      { pattern: /ca/gi, explanation: '"ca" sounds like "kah" (not like English "cat")' },
+      { pattern: /dh/gi, explanation: '"dh" is a retroflex d sound' },
+      { pattern: /kh/gi, explanation: '"kh" is a guttural h sound' },
+      { pattern: /aa|ee|ii|oo|uu/gi, explanation: 'Double vowels are held longer' },
+      { pattern: /sh/gi, explanation: '"sh" sounds like "shut"' },
+      { pattern: /x/gi, explanation: '"x" is a breathy h sound' }
+    ];
+
+    const breakdown = [];
+    patterns.forEach(({ pattern, explanation }) => {
+      if (pattern.test(somaliWord)) {
+        const matches = somaliWord.match(pattern);
+        if (matches) {
+          matches.forEach(match => {
+            breakdown.push({ sound: match, explanation });
+          });
+        }
+      }
+    });
+
+    return breakdown;
   };
 
   const getCategoryIcon = (category) => {
