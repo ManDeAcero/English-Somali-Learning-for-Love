@@ -39,7 +39,7 @@ const Dashboard = () => {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [isQuizMode, setIsQuizMode] = useState(false);
   const [showCulturalPopup, setShowCulturalPopup] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Set to false for debugging
   const [pendingTier, setPendingTier] = useState(null);
 
   const userId = 'demo_user'; // In a real app, this would come from auth
